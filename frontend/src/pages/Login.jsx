@@ -1,8 +1,32 @@
 import { useState } from "react";
+import api from "../services/api";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  
+const handleLogin = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await api.post("/api/token/", {
+      username: username,
+      password: password,
+    });
+
+  localStorage.setItem("access", response.data.access);
+  localStorage.setItem("refresh", response.data.refresh);
+    
+  console.log("Login Successful!");
+
+  } catch (error) {
+    if (error.response) {
+        console.log(error.response.data);
+    } else {
+        console.log(error.message);
+    }
+}
+};
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -16,7 +40,7 @@ function Login() {
           Sign in to your CRM account
         </p>
 
-        <form className="mt-8 space-y-5">
+        <form onSubmit={handleLogin} className="mt-8 space-y-5">
 
           <div>
             <label className="block mb-2 font-medium">
