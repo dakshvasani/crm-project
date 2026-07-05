@@ -1,9 +1,11 @@
 import { useState } from "react";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   
 const handleLogin = async (e) => {
   e.preventDefault();
@@ -17,7 +19,8 @@ const handleLogin = async (e) => {
   localStorage.setItem("access", response.data.access);
   localStorage.setItem("refresh", response.data.refresh);
     
-  console.log("Login Successful!");
+  console.log("Going to dashboard...");
+  navigate("/dashboard");
 
   } catch (error) {
     if (error.response) {

@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import CustomerListCreateView
+from .views import CustomerListCreate, CustomerRetrieveUpdateDelete
 
 urlpatterns = [
-    path("", CustomerListCreateView.as_view(), name="customer-list"),
+    path("", CustomerListCreate.as_view(), name="customer-list"),
+    path("<int:pk>/", CustomerRetrieveUpdateDelete.as_view(), name="customer-detail"),
 ]

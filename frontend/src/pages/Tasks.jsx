@@ -1,8 +1,12 @@
+import Layout from "../components/Layout";
+
 function Tasks() {
   return (
-    <div>
-      <h1>Tasks</h1>
-    </div>
+    <Layout>
+      <h1 className="text-3xl font-bold mb-6">
+        Tasks
+      </h1>
+    </Layout>
   );
 }
 

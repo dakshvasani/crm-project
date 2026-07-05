@@ -1,8 +1,126 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import Layout from "../components/Layout";
+
 function Customers() {
+  const [customers, setCustomers] = useState([]);
+  const [search, setSearch] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getCustomers();
+  }, []);
+
+  const getCustomers = async () => {
+    try {
+      const response = await api.get("/api/customers/");
+      setCustomers(response.data);
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+    }
+  };
+
+  const filteredCustomers = customers.filter((customer) =>
+    customer.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+const deleteCustomer = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this customer?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await api.delete(`/api/customers/${id}/`);
+
+    alert("Customer Deleted Successfully!");
+
+    getCustomers(); // Refresh the list
+  } catch (error) {
+    console.log(error.response?.data || error.message);
+
+    alert("Failed to delete customer.");
+  }
+};
+
   return (
-    <div>
-      <h1>Customers</h1>
-    </div>
+    <Layout>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Customers</h1>
+
+        <button
+          onClick={() => navigate("/customers/add")}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
+          + Add Customer
+        </button>
+      </div>
+
+      <input
+        type="text"
+        placeholder="Search customer..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="border p-3 rounded-lg w-full mb-6"
+      />
+
+      <div className="bg-white rounded-xl shadow overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-blue-600 text-white">
+            <tr>
+              <th className="p-3">Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Company</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredCustomers.map((customer) => (
+              <tr
+                key={customer.id}
+                className="border-b text-center"
+              >
+                <td className="p-3">{customer.name}</td>
+                <td>{customer.email}</td>
+                <td>{customer.phone}</td>
+                <td>{customer.company}</td>
+                <td>{customer.status}</td>
+
+                <td className="space-x-2">
+                  <button
+                    onClick={() => navigate(`/customers/edit/${customer.id}`)}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => deleteCustomer(customer.id)}
+                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+
+            {filteredCustomers.length === 0 && (
+              <tr>
+                <td colSpan="6" className="p-6 text-center">
+                  Fetch the Customer Data...
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </Layout>
   );
 }
 
