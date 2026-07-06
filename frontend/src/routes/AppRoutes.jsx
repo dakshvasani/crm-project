@@ -10,6 +10,10 @@ import ProtectedRoute from "../components/ProtectedRoute";
 
 import AddCustomer from "../pages/AddCustomer";
 import EditCustomer from "../pages/EditCustomer";
+import AddLead from "../pages/AddLead";
+import EditLead from "../pages/EditLead";
+import AddTask from "../pages/AddTask";
+import EditTask from "../pages/EditTask";
 
 function AppRoutes() {
   return (
@@ -53,15 +57,6 @@ function AppRoutes() {
         />
         
         <Route
-          path="/leads"
-          element={
-            <ProtectedRoute>
-              <Leads />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
           path="/tasks"
           element={
             <ProtectedRoute>
@@ -75,6 +70,51 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <NotFound />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/leads"
+          element={
+            <ProtectedRoute>
+              <Leads />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/leads/add"
+          element={
+            <ProtectedRoute>
+              <AddLead />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/leads/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditLead />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/tasks/add"
+          element={
+            <ProtectedRoute>
+              <AddTask />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/tasks/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditTask />
             </ProtectedRoute>
           }
         />

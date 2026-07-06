@@ -6,6 +6,7 @@ import Layout from "../components/Layout";
 function Customers() {
   const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -19,6 +20,8 @@ function Customers() {
       setCustomers(response.data);
     } catch (error) {
       console.log(error.response?.data || error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -26,25 +29,35 @@ function Customers() {
     customer.name.toLowerCase().includes(search.toLowerCase())
   );
 
-const deleteCustomer = async (id) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this customer?"
-  );
+  const deleteCustomer = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this customer?"
+    );
 
-  if (!confirmDelete) return;
+    if (!confirmDelete) return;
 
-  try {
-    await api.delete(`/api/customers/${id}/`);
+    try {
+      await api.delete(`/api/customers/${id}/`);
 
-    alert("Customer Deleted Successfully!");
+      alert("Customer Deleted Successfully!");
 
-    getCustomers(); // Refresh the list
-  } catch (error) {
-    console.log(error.response?.data || error.message);
+      getCustomers(); // Refresh the list
+    } catch (error) {
+      console.log(error.response?.data || error.message);
 
-    alert("Failed to delete customer.");
+      alert("Failed to delete customer.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <h2 className="text-center text-xl mt-10">
+          Loading Customers...
+        </h2>
+      </Layout>
+    );
   }
-};
 
   return (
     <Layout>
@@ -113,7 +126,15 @@ const deleteCustomer = async (id) => {
             {filteredCustomers.length === 0 && (
               <tr>
                 <td colSpan="6" className="p-6 text-center">
-                  Fetch the Customer Data...
+                  <div className="py-8">
+                    <h2 className="text-xl font-semibold">
+                      No Customers Found
+                    </h2>
+                              
+                    <p className="text-gray-500 mt-2">
+                      Click "Add Customer" to create your first customer.
+                    </p>
+                  </div>
                 </td>
               </tr>
             )}
