@@ -6,10 +6,11 @@ import Layout from "../components/Layout";
 function Customers() {
   const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const customersPerPage = 5;
   const [loading, setLoading] = useState(true);
 
+  const customersPerPage = 5;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,9 +28,17 @@ function Customers() {
     }
   };
 
-  const filteredCustomers = customers.filter((customer) =>
-    customer.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredCustomers = customers.filter((customer) => {
+    const matchesSearch = customer.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "All" ||
+      customer.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const indexOfLastCustomer = currentPage * customersPerPage;
   const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
@@ -86,20 +95,39 @@ function Customers() {
         </button>
       </div>
 
-      <input
-        type="text"
-        placeholder="Search customer..."
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setCurrentPage(1);
-        }}
-        className="border p-3 rounded-lg w-full mb-4"
-      />
+      {/* Search + Filter */}
+
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
+
+        <input
+          type="text"
+          placeholder="Search customer..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="border p-3 rounded-lg flex-1"
+        />
+
+        <select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="border p-3 rounded-lg md:w-56"
+        >
+          <option value="All">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+
+      </div>
 
       <div className="mb-4 text-gray-600">
         Total Customers:{" "}
-        <span className="font-bold">
+        <span className="font-bold text-blue-600">
           {filteredCustomers.length}
         </span>
       </div>
@@ -169,7 +197,7 @@ function Customers() {
                     </h2>
 
                     <p className="text-gray-500 mt-2">
-                      Click "Add Customer" to create your first customer.
+                      Try changing the search or filter, or add a new customer.
                     </p>
                   </div>
                 </td>
@@ -188,7 +216,7 @@ function Customers() {
           </button>
 
           <span className="font-semibold bg-gray-100 px-4 py-2 rounded-lg">
-            Page {currentPage} / {totalPages}
+            Page {currentPage} of {totalPages}
           </span>
 
           <button

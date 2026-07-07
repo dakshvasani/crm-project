@@ -6,9 +6,11 @@ import Layout from "../components/Layout";
 function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const tasksPerPage = 5;
   const [loading, setLoading] = useState(true);
+
+  const tasksPerPage = 5;
 
   const navigate = useNavigate();
 
@@ -27,9 +29,17 @@ function Tasks() {
     }
   };
 
-  const filteredTasks = tasks.filter((task) =>
-    task.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch = (task.title || "")
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "All" ||
+      task.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
@@ -56,6 +66,7 @@ function Tasks() {
 
       alert("Task Deleted Successfully!");
 
+      setCurrentPage(1);
       getTasks();
     } catch (error) {
       console.log(error.response?.data || error.message);
@@ -66,45 +77,72 @@ function Tasks() {
   if (loading) {
     return (
       <Layout>
-        <h2 className="text-center text-xl mt-10">
-          Loading Tasks...
-        </h2>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-xl font-semibold animate-pulse">
+            Loading Tasks...
+          </div>
+        </div>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Tasks</h1>
+      <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+
+        <h1 className="text-3xl font-bold text-gray-800">
+          Tasks
+        </h1>
 
         <button
           onClick={() => navigate("/tasks/add")}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
         >
           + Add Task
         </button>
+
       </div>
 
-      <input
-        type="text"
-        placeholder="Search task..."
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setCurrentPage(1);
-        }}
-        className="border p-3 rounded-lg w-full mb-4"
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
-      <div className="mb-4 text-gray-600">
-        Total Tasks:{" "}
-        <span className="font-bold">
+        <input
+          type="text"
+          placeholder="Search Task..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+        />
+
+        <select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="border rounded-lg p-3"
+        >
+          <option value="All">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+      </div>
+
+      <div className="mb-4">
+        <span className="text-gray-600">
+          Total Tasks :
+        </span>{" "}
+        <span className="font-bold text-blue-600 text-lg">
           {filteredTasks.length}
         </span>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-x-auto">
+
         <table className="w-full">
           <thead className="bg-blue-600 text-white">
             <tr>
@@ -120,10 +158,16 @@ function Tasks() {
             {currentTasks.map((task) => (
               <tr
                 key={task.id}
-                className="border-b text-center hover:bg-gray-50"
+                className="border-b text-center hover:bg-gray-50 transition"
               >
-                <td className="p-3">{task.title}</td>
-                <td>{task.description}</td>
+                <td className="p-3 font-medium">
+                  {task.title}
+                </td>
+
+                <td className="max-w-xs truncate px-2">
+                  {task.description}
+                </td>
+
                 <td>{task.due_date}</td>
 
                 <td>
@@ -144,15 +188,17 @@ function Tasks() {
 
                 <td className="space-x-2">
                   <button
-                    onClick={() => navigate(`/tasks/edit/${task.id}`)}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                    onClick={() =>
+                      navigate(`/tasks/edit/${task.id}`)
+                    }
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg transition"
                   >
                     Edit
                   </button>
 
                   <button
                     onClick={() => deleteTask(task.id)}
-                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition"
                   >
                     Delete
                   </button>
@@ -162,15 +208,28 @@ function Tasks() {
 
             {filteredTasks.length === 0 && (
               <tr>
-                <td colSpan="5" className="p-6 text-center">
-                  <div className="py-8">
-                    <h2 className="text-xl font-semibold">
+                <td
+                  colSpan="5"
+                  className="text-center py-10"
+                >
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-bold text-gray-700">
                       No Tasks Found
                     </h2>
 
-                    <p className="text-gray-500 mt-2">
-                      Click "Add Task" to create your first task.
+                    <p className="text-gray-500">
+                      Try changing the search/filter or add a
+                      new task.
                     </p>
+
+                    <button
+                      onClick={() =>
+                        navigate("/tasks/add")
+                      }
+                      className="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+                    >
+                      + Add First Task
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -178,30 +237,53 @@ function Tasks() {
           </tbody>
         </table>
 
-        <div className="flex justify-center items-center gap-4 py-6">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
-            className="bg-gray-300 px-4 py-2 rounded-lg disabled:opacity-50"
-          >
-            Previous
-          </button>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 px-6 py-5 border-t">
 
-          <span className="font-semibold bg-gray-100 px-4 py-2 rounded-lg">
-            Page {currentPage} / {totalPages}
-          </span>
+          <div className="text-gray-600">
+            Showing{" "}
+            <span className="font-bold">
+              {currentTasks.length}
+            </span>{" "}
+            of{" "}
+            <span className="font-bold">
+              {filteredTasks.length}
+            </span>{" "}
+            tasks
+          </div>
 
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
-          >
-            Next
-          </button>
+          <div className="flex items-center gap-4">
+
+            <button
+              disabled={currentPage === 1}
+              onClick={() =>
+                setCurrentPage((prev) => prev - 1)
+              }
+              className="bg-gray-300 px-4 py-2 rounded-lg disabled:opacity-50 hover:bg-gray-400 transition"
+            >
+              Previous
+            </button>
+
+            <span className="font-semibold bg-blue-100 text-blue-700 px-5 py-2 rounded-lg">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((prev) => prev + 1)
+              }
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50 hover:bg-blue-700 transition"
+            >
+              Next
+            </button>
+
+          </div>
+
         </div>
+
       </div>
     </Layout>
   );
 }
 
-export default Tasks;
+export default Tasks;            
