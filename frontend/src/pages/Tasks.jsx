@@ -6,6 +6,8 @@ import Layout from "../components/Layout";
 function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 5;
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -29,6 +31,19 @@ function Tasks() {
     task.title.toLowerCase().includes(search.toLowerCase())
   );
 
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+
+  const currentTasks = filteredTasks.slice(
+    indexOfFirstTask,
+    indexOfLastTask
+  );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredTasks.length / tasksPerPage)
+  );
+
   const deleteTask = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this task?"
@@ -44,7 +59,6 @@ function Tasks() {
       getTasks();
     } catch (error) {
       console.log(error.response?.data || error.message);
-
       alert("Failed to delete task.");
     }
   };
@@ -76,9 +90,19 @@ function Tasks() {
         type="text"
         placeholder="Search task..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="border p-3 rounded-lg w-full mb-6"
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setCurrentPage(1);
+        }}
+        className="border p-3 rounded-lg w-full mb-4"
       />
+
+      <div className="mb-4 text-gray-600">
+        Total Tasks:{" "}
+        <span className="font-bold">
+          {filteredTasks.length}
+        </span>
+      </div>
 
       <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full">
@@ -93,15 +117,30 @@ function Tasks() {
           </thead>
 
           <tbody>
-            {filteredTasks.map((task) => (
+            {currentTasks.map((task) => (
               <tr
                 key={task.id}
-                className="border-b text-center"
+                className="border-b text-center hover:bg-gray-50"
               >
                 <td className="p-3">{task.title}</td>
                 <td>{task.description}</td>
                 <td>{task.due_date}</td>
-                <td>{task.status}</td>
+
+                <td>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      task.status === "Completed"
+                        ? "bg-green-100 text-green-700"
+                        : task.status === "Pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : task.status === "In Progress"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {task.status}
+                  </span>
+                </td>
 
                 <td className="space-x-2">
                   <button
@@ -138,6 +177,28 @@ function Tasks() {
             )}
           </tbody>
         </table>
+
+        <div className="flex justify-center items-center gap-4 py-6">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="bg-gray-300 px-4 py-2 rounded-lg disabled:opacity-50"
+          >
+            Previous
+          </button>
+
+          <span className="font-semibold bg-gray-100 px-4 py-2 rounded-lg">
+            Page {currentPage} / {totalPages}
+          </span>
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </Layout>
   );

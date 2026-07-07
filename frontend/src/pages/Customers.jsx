@@ -6,6 +6,8 @@ import Layout from "../components/Layout";
 function Customers() {
   const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const customersPerPage = 5;
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -29,6 +31,19 @@ function Customers() {
     customer.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const indexOfLastCustomer = currentPage * customersPerPage;
+  const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
+
+  const currentCustomers = filteredCustomers.slice(
+    indexOfFirstCustomer,
+    indexOfLastCustomer
+  );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredCustomers.length / customersPerPage)
+  );
+
   const deleteCustomer = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this customer?"
@@ -41,10 +56,9 @@ function Customers() {
 
       alert("Customer Deleted Successfully!");
 
-      getCustomers(); // Refresh the list
+      getCustomers();
     } catch (error) {
       console.log(error.response?.data || error.message);
-
       alert("Failed to delete customer.");
     }
   };
@@ -76,9 +90,19 @@ function Customers() {
         type="text"
         placeholder="Search customer..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="border p-3 rounded-lg w-full mb-6"
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setCurrentPage(1);
+        }}
+        className="border p-3 rounded-lg w-full mb-4"
       />
+
+      <div className="mb-4 text-gray-600">
+        Total Customers:{" "}
+        <span className="font-bold">
+          {filteredCustomers.length}
+        </span>
+      </div>
 
       <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full">
@@ -94,20 +118,33 @@ function Customers() {
           </thead>
 
           <tbody>
-            {filteredCustomers.map((customer) => (
+            {currentCustomers.map((customer) => (
               <tr
                 key={customer.id}
-                className="border-b text-center"
+                className="border-b text-center hover:bg-gray-50"
               >
                 <td className="p-3">{customer.name}</td>
                 <td>{customer.email}</td>
                 <td>{customer.phone}</td>
                 <td>{customer.company}</td>
-                <td>{customer.status}</td>
+
+                <td>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      customer.status === "Active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {customer.status}
+                  </span>
+                </td>
 
                 <td className="space-x-2">
                   <button
-                    onClick={() => navigate(`/customers/edit/${customer.id}`)}
+                    onClick={() =>
+                      navigate(`/customers/edit/${customer.id}`)
+                    }
                     className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
                   >
                     Edit
@@ -130,7 +167,7 @@ function Customers() {
                     <h2 className="text-xl font-semibold">
                       No Customers Found
                     </h2>
-                              
+
                     <p className="text-gray-500 mt-2">
                       Click "Add Customer" to create your first customer.
                     </p>
@@ -140,6 +177,28 @@ function Customers() {
             )}
           </tbody>
         </table>
+
+        <div className="flex justify-center items-center gap-4 py-6">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="bg-gray-300 px-4 py-2 rounded-lg disabled:opacity-50"
+          >
+            Previous
+          </button>
+
+          <span className="font-semibold bg-gray-100 px-4 py-2 rounded-lg">
+            Page {currentPage} / {totalPages}
+          </span>
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </Layout>
   );
