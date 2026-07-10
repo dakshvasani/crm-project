@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
 import { exportToExcel } from "../utils/exportToExcel";
+import { toast } from "react-toastify";
 
 function Leads() {
   const [leads, setLeads] = useState([]);
@@ -79,13 +80,13 @@ function Leads() {
     try {
       await api.delete(`/api/leads/${id}/`);
 
-      alert("Lead Deleted Successfully!");
+      toast.success("Lead Deleted Successfully!");
 
       setCurrentPage(1);
       getLeads();
     } catch (error) {
       console.log(error.response?.data || error.message);
-      alert("Failed to delete lead.");
+      toast.error("Failed to delete lead.");
     }
   };
 

@@ -15,9 +15,9 @@ import EditLead from "../pages/EditLead";
 import AddTask from "../pages/AddTask";
 import EditTask from "../pages/EditTask";
 
+
 function AppRoutes() {
   return (
-    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
 
@@ -120,7 +120,6 @@ function AppRoutes() {
         />
       
       </Routes>
-    </BrowserRouter>
   );
 }
 

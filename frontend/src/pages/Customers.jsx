@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
 import { exportToExcel } from "../utils/exportToExcel";
+import { toast } from "react-toastify";
 
 function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -64,12 +65,12 @@ function Customers() {
     try {
       await api.delete(`/api/customers/${id}/`);
 
-      alert("Customer Deleted Successfully!");
+      toast.success("Customer Deleted Successfully!");
 
       getCustomers();
     } catch (error) {
       console.log(error.response?.data || error.message);
-      alert("Failed to delete customer.");
+      toast.error("Failed to delete customer.");
     }
   };
 

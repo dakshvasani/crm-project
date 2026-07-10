@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
 import { exportToExcel } from "../utils/exportToExcel";
+import { toast } from "react-toastify";
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -65,13 +66,13 @@ function Tasks() {
     try {
       await api.delete(`/api/tasks/${id}/`);
 
-      alert("Task Deleted Successfully!");
+      toast.success("Task Deleted Successfully!");
 
       setCurrentPage(1);
       getTasks();
     } catch (error) {
       console.log(error.response?.data || error.message);
-      alert("Failed to delete task.");
+      toast.error("Failed to delete task.");
     }
   };
 
@@ -112,7 +113,7 @@ return (
         </button>
       </div>
     </div>
-    
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
         <input
