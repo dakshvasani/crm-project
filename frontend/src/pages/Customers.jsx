@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
+import { exportToExcel } from "../utils/exportToExcel";
 
 function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -86,14 +87,29 @@ function Customers() {
     <Layout>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Customers</h1>
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate("/customers/add")}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            >
+              + Add Customer
+            </button>
 
-        <button
-          onClick={() => navigate("/customers/add")}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          + Add Customer
-        </button>
+            <button
+                onClick={() =>
+                  exportToExcel(
+                    filteredCustomers,
+                    "Customers"
+                  )
+                }
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+              >
+                Export Excel
+            </button>
+          </div>
       </div>
+
+
 
       {/* Search + Filter */}
 

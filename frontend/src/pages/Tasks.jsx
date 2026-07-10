@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
+import { exportToExcel } from "../utils/exportToExcel";
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -86,14 +87,14 @@ function Tasks() {
     );
   }
 
-  return (
-    <Layout>
-      <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+return (
+  <Layout>
+    <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+      <h1 className="text-3xl font-bold text-gray-800">
+        Tasks
+      </h1>
 
-        <h1 className="text-3xl font-bold text-gray-800">
-          Tasks
-        </h1>
-
+      <div className="flex gap-3">
         <button
           onClick={() => navigate("/tasks/add")}
           className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
@@ -101,8 +102,17 @@ function Tasks() {
           + Add Task
         </button>
 
+        <button
+          onClick={() =>
+            exportToExcel(filteredTasks, "Tasks")
+          }
+          className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
+        >
+          Export Excel
+        </button>
       </div>
-
+    </div>
+    
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
         <input

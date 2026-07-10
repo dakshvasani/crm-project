@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
+import { exportToExcel } from "../utils/exportToExcel";
 
 function Leads() {
   const [leads, setLeads] = useState([]);
@@ -106,13 +107,26 @@ function Leads() {
         <h1 className="text-3xl font-bold text-gray-800">
           Leads
         </h1>
+        <div className="flex gap-3">
+               <button
+                 onClick={() => navigate("/leads/add")}
+                 className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+               >
+                 + Add Lead
+               </button>
 
-        <button
-          onClick={() => navigate("/leads/add")}
-          className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          + Add Lead
-        </button>
+               <button
+                   onClick={() =>
+                     exportToExcel(
+                       filteredLeads,
+                       "Leads"
+                     )
+                   }
+                   className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                 >
+                   Export Excel
+               </button>
+        </div>         
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
