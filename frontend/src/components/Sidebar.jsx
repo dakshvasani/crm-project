@@ -40,6 +40,10 @@ function Sidebar() {
 
       {/* Menu */}
       <nav className="flex-1 p-5 space-y-3">
+        <NavLink to="/profile" className={menuClass}>
+          👤 Profile
+        </NavLink>
+
         <NavLink to="/dashboard" className={menuClass}>
           📊 Dashboard
         </NavLink>
