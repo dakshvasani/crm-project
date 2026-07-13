@@ -28,6 +28,7 @@ function Login() {
 
       localStorage.setItem("access", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
+      localStorage.setItem("username", username);
 
       toast.success("Login Successful!");
 

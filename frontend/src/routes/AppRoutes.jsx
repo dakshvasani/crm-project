@@ -14,6 +14,7 @@ import AddLead from "../pages/AddLead";
 import EditLead from "../pages/EditLead";
 import AddTask from "../pages/AddTask";
 import EditTask from "../pages/EditTask";
+import Profile from "../pages/Profile";
 
 
 function AppRoutes() {
@@ -115,6 +116,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <EditTask />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />
