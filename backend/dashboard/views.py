@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from customers.models import Customer
 from leads.models import Lead
 from tasks.models import Task
-
+from django.utils import timezone
 
 class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
@@ -46,6 +46,15 @@ class DashboardView(APIView):
                 status="Completed"
             ).count(),
 
+            "recent_activity": [
+                {
+                    "type": "Customer",
+                    "message": f"Customer '{c.name}' added",
+                    "date": c.created_at,
+                }
+                for c in Customer.objects.order_by("-created_at")[:5]
+            ],
+            
             # Charts
             "customer_chart": [
                 {

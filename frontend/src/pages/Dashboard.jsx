@@ -16,6 +16,7 @@ import {
 
 function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
+  const [activities, setActivities] = useState([]);
 
   useEffect(() => {
     getDashboard();
@@ -24,7 +25,12 @@ function Dashboard() {
   const getDashboard = async () => {
     try {
       const response = await api.get("/api/dashboard/");
+    
       setDashboard(response.data);
+    
+      // Add this line
+      setActivities(response.data.recent_activity || []);
+    
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
@@ -233,6 +239,7 @@ function Dashboard() {
         </div>
       </div>
 
+
       {/* Upcoming Tasks */}
       <div className="bg-white rounded-xl shadow p-6">
         <h2 className="text-xl font-bold mb-4">
@@ -259,6 +266,36 @@ function Dashboard() {
             </div>
           )
         )}
+      </div>
+      <div className="bg-white rounded-xl shadow p-6 mt-8">
+        <h2 className="text-xl font-bold mb-4">
+          Recent Activity
+        </h2>
+
+        <div className="space-y-4">
+          {activities.map((activity, index) => (
+            <div
+              key={index}
+              className="border-b pb-3"
+            >
+              <p className="font-medium">
+                {activity.message}
+              </p>
+          
+              <p className="text-sm text-gray-500">
+                {new Date(
+                  activity.date
+                ).toLocaleString()}
+              </p>
+            </div>
+          ))}
+
+          {activities.length === 0 && (
+            <p className="text-gray-500">
+              No recent activity.
+            </p>
+          )}
+        </div>
       </div>
     </Layout>
   );
