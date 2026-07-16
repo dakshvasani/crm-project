@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import SearchBar from "./SearchBar";
 
 function Layout({ children }) {
   const navigate = useNavigate();
@@ -24,6 +25,9 @@ function Layout({ children }) {
         </div>
 
         <div className="p-6">
+          <div className="flex justify-end mb-6">
+              <SearchBar />
+          </div>
           {children}
         </div>
       </div>

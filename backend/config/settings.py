@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "accounts",
     "customers",
     "leads",
+    "search",
     "tasks",
     "notes",
     "dashboard",

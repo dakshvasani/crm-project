@@ -39,4 +39,6 @@ urlpatterns = [
     path("api/tasks/", include("tasks.urls")),
 
     path("api/dashboard/", include("dashboard.urls")),
+    
+    path("api/search/", include("search.urls")),
 ]
