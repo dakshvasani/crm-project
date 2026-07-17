@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import Layout from "../components/Layout";
+import { useNavigate } from "react-router-dom";
 
 import {
   PieChart,
@@ -17,6 +18,7 @@ import {
 function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [activities, setActivities] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getDashboard();
@@ -61,35 +63,52 @@ function Dashboard() {
 
       {/* Summary Cards */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h3 className="text-gray-500">
-            Customers
-          </h3>
+
+        <div
+          onClick={() => navigate("/customers")}
+          className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition cursor-pointer"
+        >
+          <h3 className="text-gray-500">Customers</h3>
 
           <p className="text-4xl font-bold text-blue-600 mt-2">
             {dashboard.total_customers}
           </p>
+
+          <p className="text-sm text-gray-400 mt-3">
+            Click to manage customers →
+          </p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h3 className="text-gray-500">
-            Leads
-          </h3>
+        <div
+          onClick={() => navigate("/leads")}
+          className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition cursor-pointer"
+        >
+          <h3 className="text-gray-500">Leads</h3>
 
           <p className="text-4xl font-bold text-green-600 mt-2">
             {dashboard.total_leads}
           </p>
+
+          <p className="text-sm text-gray-400 mt-3">
+            Click to manage leads →
+          </p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h3 className="text-gray-500">
-            Tasks
-          </h3>
+        <div
+          onClick={() => navigate("/tasks")}
+          className="bg-white p-6 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition cursor-pointer"
+        >
+          <h3 className="text-gray-500">Tasks</h3>
 
           <p className="text-4xl font-bold text-yellow-500 mt-2">
             {dashboard.total_tasks}
           </p>
+
+          <p className="text-sm text-gray-400 mt-3">
+            Click to manage tasks →
+          </p>
         </div>
+
       </div>
 
       {/* Charts */}
@@ -183,90 +202,117 @@ function Dashboard() {
       </div>
 
       {/* Recent Customers + Leads */}
-      <div className="grid lg:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-bold mb-4">
+      <div className="bg-white rounded-xl shadow p-6">
+        <div className="flex justify-between items-center mb-4">
+
+          <h2 className="text-xl font-bold">
             Recent Customers
           </h2>
 
-          {dashboard.recent_customers.map(
-            (customer) => (
-              <div
-                key={customer.id}
-                className="border-b py-3"
-              >
-                <p className="font-semibold">
-                  {customer.name}
-                </p>
+          <button
+            onClick={() => navigate("/customers")}
+            className="text-blue-600 hover:underline"
+          >
+            View All
+          </button>
 
-                <p className="text-gray-500">
-                  {customer.email}
-                </p>
-
-                <span className="text-sm text-blue-600">
-                  {customer.status}
-                </span>
-              </div>
-            )
-          )}
         </div>
 
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-bold mb-4">
+        {dashboard.recent_customers.map((customer) => (
+          <div
+            key={customer.id}
+            onClick={() => navigate(`/customers/edit/${customer.id}`)}
+            className="border-b py-3 cursor-pointer hover:bg-gray-50 px-2 rounded transition"
+          >
+            <p className="font-semibold">{customer.name}</p>
+        
+            <p className="text-gray-500">
+              {customer.email}
+            </p>
+        
+            <span className="text-sm text-blue-600">
+              {customer.status}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-xl shadow p-6">
+
+        <div className="flex justify-between items-center mb-4">
+
+          <h2 className="text-xl font-bold">
             Recent Leads
           </h2>
 
-          {dashboard.recent_leads.map(
-            (lead) => (
-              <div
-                key={lead.id}
-                className="border-b py-3"
-              >
-                <p className="font-semibold">
-                  {lead.name}
-                </p>
+          <button
+            onClick={() => navigate("/leads")}
+            className="text-green-600 hover:underline"
+          >
+            View All
+          </button>
 
-                <p className="text-gray-500">
-                  {lead.email}
-                </p>
-
-                <span className="text-sm text-green-600">
-                  {lead.status}
-                </span>
-              </div>
-            )
-          )}
         </div>
+
+        {dashboard.recent_leads.map((lead) => (
+          <div
+            key={lead.id}
+            onClick={() => navigate(`/leads/edit/${lead.id}`)}
+            className="border-b py-3 cursor-pointer hover:bg-gray-50 px-2 rounded transition"
+          >
+            <p className="font-semibold">{lead.name}</p>
+        
+            <p className="text-gray-500">
+              {lead.email}
+            </p>
+        
+            <span className="text-sm text-green-600">
+              {lead.status}
+            </span>
+          </div>
+        ))}
       </div>
 
 
       {/* Upcoming Tasks */}
       <div className="bg-white rounded-xl shadow p-6">
-        <h2 className="text-xl font-bold mb-4">
-          Upcoming Tasks
-        </h2>
 
-        {dashboard.upcoming_tasks.map(
-          (task) => (
-            <div
-              key={task.id}
-              className="border-b py-3"
-            >
-              <p className="font-semibold">
-                {task.title}
-              </p>
+        <div className="flex justify-between items-center mb-4">
 
-              <p className="text-gray-500">
-                Due: {task.due_date}
-              </p>
+          <h2 className="text-xl font-bold">
+            Upcoming Tasks
+          </h2>
 
-              <span className="text-sm text-blue-600">
-                {task.status}
-              </span>
-            </div>
-          )
-        )}
+          <button
+            onClick={() => navigate("/tasks")}
+            className="text-yellow-600 hover:underline"
+          >
+            View All
+          </button>
+
+        </div>
+
+        {dashboard.upcoming_tasks.map((task) => (
+          <div
+            key={task.id}
+            onClick={() => navigate(`/tasks/edit/${task.id}`)}
+            className="border-b py-3 cursor-pointer hover:bg-gray-50 px-2 rounded transition"
+          >
+            <p className="font-semibold">
+              {task.title}
+            </p>
+        
+            <p className="text-gray-500">
+              Due: {task.due_date}
+            </p>
+        
+            <span className="text-sm text-blue-600">
+              {task.status}
+            </span>
+          </div>
+        ))}
       </div>
+      
       <div className="bg-white rounded-xl shadow p-6 mt-8">
         <h2 className="text-xl font-bold mb-4">
           Recent Activity

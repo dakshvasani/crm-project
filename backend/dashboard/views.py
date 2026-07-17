@@ -6,6 +6,8 @@ from customers.models import Customer
 from leads.models import Lead
 from tasks.models import Task
 from django.utils import timezone
+from django.db.models import Q
+from rest_framework.decorators import api_view, permission_classes
 
 class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
@@ -152,3 +154,53 @@ class DashboardView(APIView):
         }
 
         return Response(data)
+    
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def global_search(request):
+
+    query = request.GET.get("q", "")
+
+    customers = Customer.objects.filter(
+        Q(name__icontains=query) |
+        Q(email__icontains=query)
+    )[:5]
+
+    leads = Lead.objects.filter(
+        Q(name__icontains=query) |
+        Q(email__icontains=query)
+    )[:5]
+
+    tasks = Task.objects.filter(
+        Q(title__icontains=query)
+    )[:5]
+
+    return Response({
+
+        "customers": [
+            {
+                "id": c.id,
+                "name": c.name,
+                "email": c.email,
+            }
+            for c in customers
+        ],
+
+        "leads": [
+            {
+                "id": l.id,
+                "name": l.name,
+                "email": l.email,
+            }
+            for l in leads
+        ],
+
+        "tasks": [
+            {
+                "id": t.id,
+                "title": t.title,
+                "status": t.status,
+            }
+            for t in tasks
+        ],
+    })
