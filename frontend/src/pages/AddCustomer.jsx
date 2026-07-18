@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
+import { toast } from "react-toastify";
 
 function AddCustomer() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function AddCustomer() {
     try {
       await api.post("/api/customers/", customer);
 
-      alert("Customer Added Successfully!");
+      toast.success("Customer Added Successfully!");
 
       navigate("/customers");
     } catch (error) {

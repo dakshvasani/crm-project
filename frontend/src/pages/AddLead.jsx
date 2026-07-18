@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { toast } from "react-toastify";
 import Layout from "../components/Layout";
 
 function AddLead() {
@@ -27,7 +28,7 @@ function AddLead() {
     try {
       await api.post("/api/leads/", lead);
 
-      alert("Lead Added Successfully!");
+      toast.success("Lead Added Successfully!");
 
       navigate("/leads");
     } catch (error) {

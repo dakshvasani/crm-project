@@ -41,7 +41,7 @@ function EditCustomer() {
     try {
       await api.put(`/api/customers/${id}/`, customer);
 
-      alert("Customer Updated Successfully!");
+      toast.success("Customer Updated Successfully!");
 
       navigate("/customers");
     } catch (error) {

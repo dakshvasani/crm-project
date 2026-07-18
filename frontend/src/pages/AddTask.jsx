@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
+import { toast } from "react-toastify";
 
 function AddTask() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ function AddTask() {
     try {
       await api.post("/api/tasks/", task);
 
-      alert("Task Added Successfully!");
+      toast.success("Task Added Successfully!");
 
       navigate("/tasks");
     } catch (error) {

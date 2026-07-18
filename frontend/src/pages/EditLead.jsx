@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 import Layout from "../components/Layout";
+import { toast } from "react-toastify";
 
 function EditLead() {
   const { id } = useParams();
@@ -41,7 +42,7 @@ function EditLead() {
     try {
       await api.put(`/api/leads/${id}/`, lead);
 
-      alert("Lead Updated Successfully!");
+      toast.success("Lead Updated Successfully!");
 
       navigate("/leads");
     } catch (error) {
