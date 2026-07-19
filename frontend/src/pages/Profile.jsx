@@ -1,82 +1,99 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 import Layout from "../components/Layout";
 
 function Profile() {
-  const [user, setUser] = useState({
-    username: "",
-    email: "",
-    role: "Admin",
-  });
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    const username =
-      localStorage.getItem("username") || "Admin";
-
-    setUser({
-      username,
-      email: "admin@gmail.com",
-      role: "Administrator",
-    });
+    getProfile();
   }, []);
+
+  const getProfile = async () => {
+    try {
+      const response = await api.get("/api/accounts/profile/");
+      setProfile(response.data);
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+    }
+  };
+
+  if (!profile) {
+    return (
+      <Layout>
+        <h2 className="text-center mt-10 text-xl">
+          Loading Profile...
+        </h2>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
+      <div className="max-w-3xl mx-auto">
 
-        <div className="flex items-center gap-6 mb-8">
-          <div className="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center text-4xl font-bold">
-            {user.username.charAt(0).toUpperCase()}
+        <div className="bg-white rounded-xl shadow-lg p-8">
+
+          <div className="flex items-center gap-6">
+
+            <div className="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center text-4xl font-bold">
+              {profile.username.charAt(0).toUpperCase()}
+            </div>
+
+            <div>
+              <h1 className="text-3xl font-bold">
+                {profile.first_name} {profile.last_name}
+              </h1>
+
+              <p className="text-gray-500">
+                @{profile.username}
+              </p>
+            </div>
+
           </div>
 
-          <div>
-            <h1 className="text-3xl font-bold">
-              {user.username}
-            </h1>
+          <div className="grid md:grid-cols-2 gap-6 mt-10">
 
-            <p className="text-gray-500">
-              {user.email}
-            </p>
+            <div>
+              <label className="font-semibold">
+                Username
+              </label>
 
-            <p className="text-blue-600 font-semibold">
-              {user.role}
-            </p>
-          </div>
-        </div>
+              <div className="mt-2 p-3 rounded bg-gray-100">
+                {profile.username}
+              </div>
+            </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <label className="font-semibold">
+                Email
+              </label>
 
-          <div className="border rounded-lg p-5">
-            <h3 className="font-bold text-lg mb-2">
-              Username
-            </h3>
+              <div className="mt-2 p-3 rounded bg-gray-100">
+                {profile.email}
+              </div>
+            </div>
 
-            <p>{user.username}</p>
-          </div>
+            <div>
+              <label className="font-semibold">
+                First Name
+              </label>
 
-          <div className="border rounded-lg p-5">
-            <h3 className="font-bold text-lg mb-2">
-              Email
-            </h3>
+              <div className="mt-2 p-3 rounded bg-gray-100">
+                {profile.first_name || "-"}
+              </div>
+            </div>
 
-            <p>{user.email}</p>
-          </div>
+            <div>
+              <label className="font-semibold">
+                Last Name
+              </label>
 
-          <div className="border rounded-lg p-5">
-            <h3 className="font-bold text-lg mb-2">
-              Role
-            </h3>
+              <div className="mt-2 p-3 rounded bg-gray-100">
+                {profile.last_name || "-"}
+              </div>
+            </div>
 
-            <p>{user.role}</p>
-          </div>
-
-          <div className="border rounded-lg p-5">
-            <h3 className="font-bold text-lg mb-2">
-              Status
-            </h3>
-
-            <p className="text-green-600 font-semibold">
-              Active
-            </p>
           </div>
 
         </div>
