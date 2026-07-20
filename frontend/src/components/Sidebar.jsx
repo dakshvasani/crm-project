@@ -48,6 +48,10 @@ function Sidebar() {
           📊 Dashboard
         </NavLink>
 
+        <NavLink to="/reports" className={menuClass}>
+          📈 Reports
+        </NavLink>
+
         <NavLink to="/customers" className={menuClass}>
           👥 Customers
         </NavLink>
