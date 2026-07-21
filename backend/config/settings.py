@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "tasks",
     "notes",
     "reports",
+    "notifications",
     "dashboard",
 ]
 

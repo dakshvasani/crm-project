@@ -46,4 +46,6 @@ urlpatterns = [
     path("api/accounts/", include("accounts.urls")),
     
     path("api/reports/", include("reports.urls")),
+
+    path("api/notifications/", include("notifications.urls")),
 ]
