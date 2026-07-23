@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "reports",
     "notifications",
     "dashboard",
+    "users",
 ]
 
 MIDDLEWARE = [
